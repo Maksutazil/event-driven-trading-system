@@ -1,0 +1,268 @@
+{
+  "features": [
+    {
+      "name": "current_price",
+      "description": "Current market price of the token",
+      "group": "price",
+      "aliases": ["price", "latest_price", "market_price", "last_price"],
+      "metadata": {
+        "unit": "USD",
+        "data_type": "float",
+        "importance": "high"
+      }
+    },
+    {
+      "name": "price_change_pct_5m",
+      "description": "Percentage price change over the last 5 minutes",
+      "group": "price",
+      "aliases": ["price_change_5m", "pct_change_5m", "5m_price_change"],
+      "metadata": {
+        "unit": "%",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    },
+    {
+      "name": "price_change_pct_15m",
+      "description": "Percentage price change over the last 15 minutes",
+      "group": "price",
+      "aliases": ["price_change_15m", "pct_change_15m", "15m_price_change"],
+      "metadata": {
+        "unit": "%",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    },
+    {
+      "name": "price_change_pct_1h",
+      "description": "Percentage price change over the last 1 hour",
+      "group": "price",
+      "aliases": ["price_change_1h", "pct_change_1h", "1h_price_change"],
+      "metadata": {
+        "unit": "%",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    },
+    {
+      "name": "volume_5m",
+      "description": "Trading volume over the last 5 minutes",
+      "group": "volume",
+      "aliases": ["recent_volume", "short_term_volume", "5m_volume"],
+      "metadata": {
+        "unit": "tokens",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    },
+    {
+      "name": "volume_15m",
+      "description": "Trading volume over the last 15 minutes",
+      "group": "volume",
+      "aliases": ["medium_term_volume", "15m_volume"],
+      "metadata": {
+        "unit": "tokens",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    },
+    {
+      "name": "volume_1h",
+      "description": "Trading volume over the last 1 hour",
+      "group": "volume",
+      "aliases": ["hourly_volume", "1h_volume"],
+      "metadata": {
+        "unit": "tokens",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    },
+    {
+      "name": "ma_5m",
+      "description": "Moving average price over 5 minutes",
+      "group": "indicator",
+      "aliases": ["moving_average_5m", "short_ma", "5m_ma"],
+      "metadata": {
+        "unit": "USD",
+        "data_type": "float",
+        "importance": "high"
+      }
+    },
+    {
+      "name": "ma_15m",
+      "description": "Moving average price over 15 minutes",
+      "group": "indicator",
+      "aliases": ["moving_average_15m", "medium_ma", "15m_ma"],
+      "metadata": {
+        "unit": "USD",
+        "data_type": "float",
+        "importance": "high"
+      }
+    },
+    {
+      "name": "ma_1h",
+      "description": "Moving average price over 1 hour",
+      "group": "indicator",
+      "aliases": ["moving_average_1h", "long_ma", "1h_ma"],
+      "metadata": {
+        "unit": "USD",
+        "data_type": "float",
+        "importance": "high"
+      }
+    },
+    {
+      "name": "rsi_14",
+      "description": "Relative Strength Index with period 14",
+      "group": "indicator",
+      "aliases": ["rsi", "relative_strength_index"],
+      "metadata": {
+        "unit": "",
+        "data_type": "float",
+        "importance": "high"
+      }
+    },
+    {
+      "name": "macd_histogram",
+      "description": "MACD histogram value",
+      "group": "indicator",
+      "aliases": ["macd_hist", "macd_bar", "histogram"],
+      "metadata": {
+        "unit": "",
+        "data_type": "float",
+        "importance": "high"
+      }
+    },
+    {
+      "name": "volatility_5m",
+      "description": "Price volatility over 5 minutes",
+      "group": "indicator",
+      "aliases": ["short_term_volatility", "price_volatility", "5m_volatility"],
+      "metadata": {
+        "unit": "%",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    },
+    {
+      "name": "volatility_15m",
+      "description": "Price volatility over 15 minutes",
+      "group": "indicator",
+      "aliases": ["medium_term_volatility", "15m_volatility"],
+      "metadata": {
+        "unit": "%",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    },
+    {
+      "name": "price_momentum_signal",
+      "description": "Trading signal based on price momentum",
+      "group": "signal",
+      "aliases": ["momentum_signal", "price_signal"],
+      "metadata": {
+        "unit": "",
+        "data_type": "float",
+        "importance": "high"
+      }
+    },
+    {
+      "name": "volume_spike_signal",
+      "description": "Trading signal based on volume spikes",
+      "group": "signal",
+      "aliases": ["volume_signal", "spike_signal"],
+      "metadata": {
+        "unit": "",
+        "data_type": "float",
+        "importance": "high"
+      }
+    },
+    {
+      "name": "bollinger_band_signal",
+      "description": "Trading signal based on Bollinger Bands",
+      "group": "signal",
+      "aliases": ["bb_signal", "bands_signal"],
+      "metadata": {
+        "unit": "",
+        "data_type": "float",
+        "importance": "high"
+      }
+    },
+    {
+      "name": "model_prediction",
+      "description": "Machine learning model prediction",
+      "group": "ml",
+      "aliases": ["prediction", "ml_prediction", "algo_prediction"],
+      "metadata": {
+        "unit": "",
+        "data_type": "float",
+        "importance": "critical"
+      }
+    },
+    {
+      "name": "prediction_confidence",
+      "description": "Confidence score of model prediction",
+      "group": "ml",
+      "aliases": ["model_confidence", "confidence_score", "prediction_score"],
+      "metadata": {
+        "unit": "%",
+        "data_type": "float",
+        "importance": "high"
+      }
+    },
+    {
+      "name": "model_error_estimate",
+      "description": "Estimated error range for the model prediction",
+      "group": "ml",
+      "aliases": ["error_estimate", "uncertainty"],
+      "metadata": {
+        "unit": "",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    },
+    {
+      "name": "support_level",
+      "description": "Current support price level",
+      "group": "analysis",
+      "aliases": ["support", "support_price"],
+      "metadata": {
+        "unit": "USD",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    },
+    {
+      "name": "resistance_level",
+      "description": "Current resistance price level",
+      "group": "analysis",
+      "aliases": ["resistance", "resistance_price"],
+      "metadata": {
+        "unit": "USD",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    },
+    {
+      "name": "market_trend",
+      "description": "Current market trend direction",
+      "group": "analysis",
+      "aliases": ["trend", "market_direction"],
+      "metadata": {
+        "unit": "",
+        "data_type": "string",
+        "importance": "high"
+      }
+    },
+    {
+      "name": "trend_strength",
+      "description": "Strength of the current market trend",
+      "group": "analysis",
+      "aliases": ["trend_power", "direction_strength"],
+      "metadata": {
+        "unit": "",
+        "data_type": "float",
+        "importance": "medium"
+      }
+    }
+  ]
+} 

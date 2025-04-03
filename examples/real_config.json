@@ -1,0 +1,15 @@
+{
+    "websocket_uri": "wss://pumpportal.fun/api/data",
+    "enable_dynamic_token_discovery": true,
+    "initial_capital": 10000.0,
+    "risk_per_trade": 0.02,
+    "max_position_pct": 0.1,
+    "slippage_pct": 0.005,
+    "signal_threshold": 0.7,
+    "cooldown_seconds": 3600.0,
+    "enable_token_monitoring": true,
+    "max_monitor_threads": 5,
+    "monitor_interval": 2.0,
+    "activity_check_interval": 30.0,
+    "debug_mode": true
+} 

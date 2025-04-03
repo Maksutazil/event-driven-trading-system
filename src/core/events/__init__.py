@@ -1,34 +1,27 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
-Event System Core Module
+Events Module
 
-This module provides a comprehensive event system for asynchronous communication
-between components in the trading application.
-
-Core components:
-- Event: Base class for all events
-- EventType: Enum of all possible event types
-- EventBus: Central hub for event distribution
-- EventSubscriber: Interface for components that receive events
-- EventPublisher: Interface for components that produce events
-- BaseEventSubscriber: Base implementation of EventSubscriber
-- BaseEventPublisher: Base implementation of EventPublisher
-- EventDispatcher: Combined subscriber and publisher
+This module provides the core event system for the trading application.
+It defines event types, the base Event class, and the EventBus for
+publishing and subscribing to events.
 """
 
 from .event import Event, EventType, EventPriority
 from .event_bus import EventBus
-from .interfaces import EventSubscriber, EventPublisher, EventCallback
-from .base import BaseEventSubscriber, BaseEventPublisher, EventDispatcher
+from .base import BaseEventPublisher, BaseEventSubscriber, EventDispatcher, EventHandlerWrapper
+from .history_manager import EventHistoryManager
 
 __all__ = [
     'Event',
     'EventType',
     'EventPriority',
     'EventBus',
-    'EventSubscriber',
-    'EventPublisher',
-    'EventCallback',
-    'BaseEventSubscriber',
     'BaseEventPublisher',
-    'EventDispatcher'
+    'BaseEventSubscriber',
+    'EventDispatcher',
+    'EventHistoryManager',
+    'EventHandlerWrapper',
 ]

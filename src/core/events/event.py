@@ -4,134 +4,167 @@
 """
 Event Module
 
-This module defines the Event class and related enumerations.
+This module defines the Event class and EventType enum for the event system.
 """
 
-import time
 import uuid
+import time
 from enum import Enum, auto
-from typing import Dict, Any, Optional, List
+from dataclasses import dataclass, field
+from typing import Dict, Any, Callable, List, Optional, Type, TypeVar, Union
 
 
 class EventType(Enum):
     """
-    Enumeration of all possible event types.
+    Enum of all event types supported by the system.
     """
-    # General events
-    SYSTEM = auto()
+    # Generic events
+    GENERIC = auto()
+    SYSTEM = auto()  # General system event for catch-all handlers
+    SYSTEM_STARTUP = auto()
+    SYSTEM_SHUTDOWN = auto()
+    SYSTEM_STATUS = auto()
+    ERROR = auto()
     
-    # Data-related events
-    DATA_NEW = auto()
-    DATA_UPDATE = auto()
-    DATA_ERROR = auto()
-    
-    # Token-related events
-    TOKEN_NEW = auto()
+    # Token events
+    TOKEN_CREATED = auto()
     TOKEN_TRADE = auto()
-    TOKEN_UPDATE = auto()
-    TOKEN_ERROR = auto()
+    TOKEN_UPDATED = auto()
     
-    # Feature-related events
-    FEATURE_UPDATE = auto()
-    FEATURE_ERROR = auto()
-    
-    # Trading-related events
+    # Trading events
     TRADE_SIGNAL = auto()
-    TRADE_ENTRY = auto()
-    TRADE_EXIT = auto()
-    POSITION_UPDATE = auto()
+    TRADE_EXECUTED = auto()
+    TRADE_FAILED = auto()
+    POSITION_OPENED = auto()
+    POSITION_CLOSED = auto()
+    POSITION_UPDATED = auto()
     
-    # Socket-related events
-    SOCKET_CONNECT = auto()
-    SOCKET_DISCONNECT = auto()
-    SOCKET_MESSAGE = auto()
-    SOCKET_ERROR = auto()
+    # Feature events
+    FEATURE_UPDATE = auto()
     
-    # Database-related events
-    DB_CONNECT = auto()
-    DB_DISCONNECT = auto()
-    DB_QUERY = auto()
-    DB_ERROR = auto()
+    # Risk management events
+    RISK_LIMIT_REACHED = auto()
+    RISK_ALERT = auto()
+    
+    # Websocket events
+    WEBSOCKET_CONNECTED = auto()
+    WEBSOCKET_DISCONNECTED = auto()
+    WEBSOCKET_ERROR = auto()
+    
+    # API events
+    API_REQUEST = auto()
+    API_RESPONSE = auto()
+    API_ERROR = auto()
+    
+    # User interface events
+    UI_UPDATE = auto()
+    UI_ACTION = auto()
+    
+    # Machine learning events
+    MODEL_LOADED = auto()
+    MODEL_UPDATED = auto()
+    MODEL_PREDICTION = auto()
 
 
 class EventPriority(Enum):
     """
-    Enumeration of possible event priorities.
+    Enum for event priority levels.
     
-    Higher priority events are processed before lower priority events.
+    Events with higher priority get processed before lower priority events.
     """
-    LOW = 0
-    NORMAL = 1
-    HIGH = 2
-    CRITICAL = 3
+    CRITICAL = 0
+    HIGH = 1
+    NORMAL = 2
+    LOW = 3
 
 
+# Type alias for event handlers
+EventHandler = Callable[['Event'], None]
+
+
+class EventSubscriber:
+    """
+    Interface for components that receive events.
+    """
+    def handle_event(self, event: 'Event') -> None:
+        """
+        Handle an event.
+        
+        Args:
+            event: The event to handle
+        """
+        raise NotImplementedError("Subclasses must implement handle_event()")
+
+
+@dataclass
 class Event:
     """
-    Represents a discrete event in the system.
+    Base class for all events in the system.
     
-    Events are used for communication between components and contain
-    information about what happened and any relevant data.
+    Events are immutable data containers that carry information about
+    something that happened in the system.
     """
+    event_type: EventType
+    data: Dict[str, Any] = field(default_factory=dict)
+    source: Optional[str] = None
+    timestamp: float = field(default_factory=time.time)
+    event_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    token_id: Optional[str] = None
     
-    def __init__(self, 
-                 event_type: EventType, 
-                 data: Dict[str, Any],
-                 priority: Optional[EventPriority] = EventPriority.NORMAL,
-                 source: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
+    def __post_init__(self):
         """
-        Initialize a new Event instance.
+        Validate event data after initialization.
+        """
+        if not isinstance(self.event_type, EventType):
+            raise TypeError(f"event_type must be an EventType, got {type(self.event_type)}")
+        
+        if not isinstance(self.data, dict):
+            raise TypeError(f"data must be a dict, got {type(self.data)}")
+        
+        if self.source is not None and not isinstance(self.source, str):
+            raise TypeError(f"source must be a string, got {type(self.source)}")
+            
+        # If token_id is not set but is in data, extract it
+        if self.token_id is None:
+            self.token_id = self.data.get('token_id') or self.data.get('mint')
+            
+        # If token_id is set but not in data, add it to data
+        if self.token_id is not None and 'token_id' not in self.data:
+            self.data['token_id'] = self.token_id
+    
+    def with_data(self, **kwargs) -> 'Event':
+        """
+        Create a new event with updated data.
         
         Args:
-            event_type: The type of event
-            data: Dictionary containing the event payload
-            priority: Importance level of the event (default: NORMAL)
-            source: Which component generated the event (default: None)
-            tags: Optional categorization tags (default: None)
-        """
-        self.event_type = event_type
-        self.data = data
-        self.timestamp = time.time()
-        self.event_id = str(uuid.uuid4())
-        self.priority = priority
-        self.source = source
-        self.tags = tags or []
-    
-    def __lt__(self, other: 'Event') -> bool:
-        """
-        Compare events based on priority and timestamp.
-        
-        Higher priority events come first. If priorities are equal,
-        older events come first.
-        
-        Args:
-            other: The event to compare with
+            **kwargs: Data fields to update
             
         Returns:
-            bool: True if this event has higher priority or is older
+            A new Event instance with updated data
         """
-        if self.priority.value == other.priority.value:
-            return self.timestamp < other.timestamp
-        return self.priority.value > other.priority.value
+        new_data = self.data.copy()
+        new_data.update(kwargs)
+        
+        # Check if token_id is being updated in kwargs
+        token_id = kwargs.get('token_id') or self.token_id
+        if 'mint' in kwargs and token_id is None:
+            token_id = kwargs.get('mint')
+        
+        return Event(
+            event_type=self.event_type,
+            data=new_data,
+            source=self.source,
+            timestamp=self.timestamp,
+            event_id=self.event_id,
+            token_id=token_id
+        )
     
     def __str__(self) -> str:
-        """Return a string representation of the event."""
-        return f"Event({self.event_type.name}, id={self.event_id}, priority={self.priority.name})"
-    
-    def to_dict(self) -> Dict[str, Any]:
         """
-        Convert the event to a dictionary representation.
+        String representation of the event.
         
         Returns:
-            Dict[str, Any]: Dictionary representation of the event
+            String representation
         """
-        return {
-            'event_id': self.event_id,
-            'event_type': self.event_type.name,
-            'timestamp': self.timestamp,
-            'priority': self.priority.name,
-            'source': self.source,
-            'tags': self.tags,
-            'data': self.data
-        }
+        source_str = f" from {self.source}" if self.source else ""
+        return f"Event({self.event_type.name}{source_str}, id={self.event_id})"
